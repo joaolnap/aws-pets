@@ -1,0 +1,56 @@
+service: aws-node-http-api-pets
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+  environment:
+    TABLE_NAME: pets-dev
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-east-1:*:table/*"
+
+functions:
+  find-all:
+    handler: src/controllers/find-all.handler
+    events:
+      - httpApi:
+          path: /pets
+          method: get
+
+  find-by-id:
+    handler: src/controllers/find-by-id.handler
+    events:
+      - httpApi:
+          path: /pets/{id}
+          method: get
+
+  save:
+    handler: src/controllers/save.handler
+    events:
+     -  httpApi:
+          path: /pets
+          method: post
+
+  update:
+    handler: src/controllers/update.handler
+    events:
+     -  httpApi:
+          path: /pets/{id}
+          method: put
+
+  delete:
+    handler: src/controllers/delete.handler
+    events:
+     -  httpApi:
+          path: /pets/{id}
+          method: delete
